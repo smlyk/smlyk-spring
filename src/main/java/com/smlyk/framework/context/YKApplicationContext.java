@@ -129,7 +129,8 @@ public class YKApplicationContext extends YKDefaultListableFactory implements YK
             beanPostProcessor.postProcessAfterInitialization(instance, beanName);
             populateBean(beanName, instance);
 
-
+            //通过这样调用，相当于给我们自己留有了可操作的空间
+            return beanWrapperMap.get(beanName).getWrappedInstance();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -164,6 +165,8 @@ public class YKApplicationContext extends YKDefaultListableFactory implements YK
             field.setAccessible(true);
 
             try {
+                if(beanWrapperMap.get(autowiredBeanName) == null) continue;
+
                 //将指定对象变量上此 Field 对象表示的字段设置为指定的新值。
                 field.set(instance, beanWrapperMap.get(autowiredBeanName).getWrappedInstance());
             } catch (IllegalAccessException e) {
@@ -201,7 +204,7 @@ public class YKApplicationContext extends YKDefaultListableFactory implements YK
 
     @Override
     public Object getBean(Class<?> beanClass) throws Exception {
-        return null;
+        return getBean(beanClass.getName());
     }
 
     public String[] getBeanDefinitionNames(){

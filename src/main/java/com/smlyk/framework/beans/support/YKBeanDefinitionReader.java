@@ -53,6 +53,9 @@ public class YKBeanDefinitionReader {
         //.（点号）也是一个正则表达式，它匹配任何一个字符。\. 匹配 "."
         URL url = this.getClass().getClassLoader().getResource("/" + scanPackage.replaceAll("\\.", "/"));
 
+        //test类测试临时改成这样...
+//        URL url = this.getClass().getResource("/" + scanPackage.replaceAll("\\.","/"));
+
         File classPath = new File(url.getFile());
 
         for (File file : classPath.listFiles()) {
