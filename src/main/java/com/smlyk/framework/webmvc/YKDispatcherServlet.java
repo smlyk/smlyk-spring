@@ -180,7 +180,7 @@ public class YKDispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             resp.getWriter().write("<font size='25' color='blue'>500 Exception</font><br/>Details:<br/>"
                     + Arrays.toString(e.getStackTrace()).replaceAll("\\[|\\]","").replaceAll("\\s","\r\n")
-                    + "<font color='green'><i>Copyright@GupaoEDU</i></font>");
+                    + "<font color='green'><i>Copyright@SMLYK</i></font>");
             e.printStackTrace();
         }
 

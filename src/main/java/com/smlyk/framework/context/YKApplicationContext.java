@@ -3,6 +3,11 @@ package com.smlyk.framework.context;
 import com.smlyk.framework.annotation.YKAutowired;
 import com.smlyk.framework.annotation.YKController;
 import com.smlyk.framework.annotation.YKService;
+import com.smlyk.framework.aop.YKAopConfig;
+import com.smlyk.framework.aop.YKAopProxy;
+import com.smlyk.framework.aop.YKCglibAopProxy;
+import com.smlyk.framework.aop.YKJdkDynamicAopProxy;
+import com.smlyk.framework.aop.support.YKAdvisedSupport;
 import com.smlyk.framework.beans.YKBeanWrapper;
 import com.smlyk.framework.beans.config.YKBeanDefinition;
 import com.smlyk.framework.beans.config.YKBeanPostProcessor;
@@ -188,18 +193,49 @@ public class YKApplicationContext extends YKDefaultListableFactory implements YK
         String className = beanDefinition.getBeanClassName();
 
         try {
+            //因为根据Class才能确定一个类是否有实例
             if (singletonBeanCacheMap.containsKey(className)){
                 instance = singletonBeanCacheMap.get(className);
             }else {
                 Class<?> clazz = Class.forName(className);
                 instance = clazz.newInstance();
 
-                singletonBeanCacheMap.put(className, instance);
+                YKAdvisedSupport config = instantionAopConfig(beanDefinition);
+                config.setTargetClass(clazz);
+                config.setTarget(instance);
+
+                if (config.pointCutMatch()){
+                    instance = createProxy(config).getProxy();
+                }
+                singletonBeanCacheMap.put(beanDefinition.getFactoryBeanName(), instance);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return instance;
+    }
+
+    private YKAopProxy createProxy(YKAdvisedSupport config) {
+
+        Class targetClass = config.getTargetClass();
+        if (targetClass.getInterfaces().length > 0){
+            return new YKJdkDynamicAopProxy(config);
+        }
+
+        return new YKCglibAopProxy(config);
+    }
+
+    private YKAdvisedSupport instantionAopConfig(YKBeanDefinition beanDefinition) throws Exception{
+
+        YKAopConfig config = new YKAopConfig();
+        config.setPointCut(reader.getConfig().getProperty("pointCut"));
+        config.setAspectClass(reader.getConfig().getProperty("aspectClass"));
+        config.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
+        config.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
+        config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
+        config.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
+
+        return new YKAdvisedSupport(config);
     }
 
     @Override
