@@ -235,6 +235,8 @@ public class YKApplicationContext extends YKDefaultListableFactory implements YK
         config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
         config.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
 
+        config.setAspectAround(reader.getConfig().getProperty("aspectAround"));
+
         return new YKAdvisedSupport(config);
     }
 

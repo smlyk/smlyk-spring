@@ -3,6 +3,7 @@ package com.smlyk.framework.aop.support;
 import com.smlyk.framework.aop.YKAopConfig;
 import com.smlyk.framework.aop.aspect.YKAfterReturningAdvice;
 import com.smlyk.framework.aop.aspect.YKAfterThrowingAdvice;
+import com.smlyk.framework.aop.aspect.YKMethodAroundAdvice;
 import com.smlyk.framework.aop.aspect.YKMethodBeforeAdvice;
 
 import java.lang.reflect.Method;
@@ -111,6 +112,12 @@ public class YKAdvisedSupport {
                         afterThrowingAdvice.setThrowingName(config.getAspectAfterThrowingName());
                         advices.add(afterThrowingAdvice);
                     }
+
+                    //环绕通知
+                    if (null != config.getAspectAround() && !"".equals(config.getAspectAround().trim())){
+                        advices.add(new YKMethodAroundAdvice(aspectMethodMap.get(config.getAspectAround()), aspectClass.newInstance()));
+                    }
+
                     methodCache.put(tcMethod, advices);
                 }
             }

@@ -20,5 +20,7 @@ public class YKAopConfig {
 
     private String aspectAfterThrowingName;
 
+    private String aspectAround;
+
 
 }

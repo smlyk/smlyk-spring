@@ -44,4 +44,15 @@ public class LogAspect {
     }
 
 
+    /**
+     * 在调用一个方法的前后，执行around方法
+     * @param joinPoint
+     */
+    public void around(YKJoinPoint joinPoint){
+
+        log.info("Invoker around method!!!" + "\nTargetObject: "+ joinPoint.getThis() + "\nArgs: "+ Arrays.toString(joinPoint.getArguments()));
+
+    }
+
+
 }
